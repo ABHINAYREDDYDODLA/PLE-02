@@ -1,0 +1,194 @@
+import json
+import time
+
+# Global Variables
+LEADERBOARD_FILE = "D:\masai program\Projects Data\_internal\leaderboard.json"
+
+def load_words_from_json(language):
+    """Load words from the appropriate JSON file based on the given language."""
+    # Mapping of language names to their respective JSON file names
+
+    # Check if the language is in the mapping
+    if language in json_data:
+        file_name = json_data.get[language]
+        with open(file_name, "r") as f:
+            return json.load(f)
+    else:
+        print(f"Keywords for {language} are not available.")
+        return []
+
+def update_leaderboard(username, wpm):
+    """Update and sort leaderboard."""
+    leaderboard = {}
+    try:
+        with open(LEADERBOARD_FILE, "r") as f:
+            leaderboard = json.load(f)
+    except FileNotFoundError:
+        pass
+
+    leaderboard[username] = wpm
+    sorted_leaderboard = dict(sorted(leaderboard.items(), key=lambda item: item[1], reverse=True))
+    
+    with open(LEADERBOARD_FILE, "w") as f:
+        json.dump(sorted_leaderboard, f)
+
+def show_leaderboard():
+    """Display leaderboard."""
+    try:
+        with open(LEADERBOARD_FILE, "r") as f:
+            leaderboard = json.load(f)
+            print("Leaderboard:")
+            for idx, (username, wpm) in enumerate(leaderboard.items()):
+                print(f"{idx+1}. {username}: {wpm} WPM")
+                if idx >= 9:
+                    break
+    except FileNotFoundError:
+        print("Leaderboard is empty.")
+
+def get_user_input():
+    """Capture user input."""
+    return input("Type the words: ")
+
+def display_categories(json_data):
+    """Display categories and their options."""
+    print("Available Programming Languages and their keywords:")
+    for idx, (language, keywords) in enumerate(json_data.items(), start=1):
+        print(f"{idx}. {language}: {', '.join(keywords)}")
+
+def get_selected_category_option(json_data, choice):
+    """Retrieve the selected category based on user's choice."""
+    try:
+        idx = int(choice)
+        if 1 <= idx <= len(json_data):
+            language = list(json_data.keys())[idx - 1]
+            return language, json_data[language]
+        else:
+            return None, None
+    except ValueError:
+        return None, None
+
+def main():
+    print("Welcome to Terminal Typing Master!")
+    username = input("Enter your username: ")
+
+    # Sample JSON data (as provided)
+    json_data= {
+    "C": [
+      "auto", "break", "case", "char", "const", "continue", "default", "do", "double", "else",
+      "enum", "extern", "float", "for", "goto", "if", "inline", "int", "long", "register",
+      "restrict", "return", "short", "signed", "sizeof", "static", "struct", "switch", "typedef",
+      "union", "unsigned", "void", "volatile", "while"
+    ],
+    "Python": [
+      "False", "None", "True", "and", "as", "assert", "async", "await", "break", "class",
+      "continue", "def", "del", "elif", "else", "except", "finally", "for", "from", "global",
+      "if", "import", "in", "is", "lambda", "nonlocal", "not", "or", "pass", "raise",
+      "return", "try", "while", "with", "yield"
+    ],
+    "Java": [
+      "abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class",
+      "const", "continue", "default", "do", "double", "else", "enum", "extends", "final",
+      "finally", "float", "for", "goto", "if", "implements", "import", "instanceof",
+      "int", "interface", "long", "native", "new", "package", "private", "protected",
+      "public", "return", "short", "static", "strictfp", "super", "switch", "synchronized",
+      "this", "throw", "throws", "transient", "try", "void", "volatile", "while"
+    ],
+    "JavaScript": [
+      "await", "break", "case", "catch", "class", "const", "continue", "debugger", "default",
+      "delete", "do", "else", "enum", "export", "extends", "false", "finally", "for", "function",
+      "if", "implements", "import", "in", "instanceof", "interface", "let", "new", "null",
+      "package", "private", "protected", "public", "return", "super", "switch", "this",
+      "throw", "true", "try", "typeof", "var", "void", "while", "with", "yield"
+    ],
+    "Ruby": [
+      "BEGIN", "END", "alias", "and", "begin", "break", "case", "class", "def", "defined?",
+      "do", "else", "elsif", "end", "ensure", "false", "for", "if", "in", "module", "next",
+      "nil", "not", "or", "redo", "rescue", "retry", "return", "self", "super", "then", "true",
+      "undef", "unless", "until", "when", "while", "yield"
+    ],
+    "C++": [
+      "alignas", "alignof", "and", "and_eq", "asm", "auto", "bitand", "bitor", "bool", "break",
+      "case", "catch", "char", "char8_t", "char16_t", "char32_t", "class", "compl", "concept",
+      "const", "consteval", "constexpr", "constinit", "const_cast", "continue", "decltype",
+      "default", "delete", "do", "double", "dynamic_cast", "else", "enum", "explicit", "export",
+      "extern", "false", "float", "for", "friend", "goto", "if", "inline", "int", "long",
+      "mutable", "namespace", "new", "noexcept", "not", "not_eq", "nullptr", "operator", "or",
+      "or_eq", "private", "protected", "public", "register", "reinterpret_cast", "requires",
+      "return", "short", "signed", "sizeof", "static", "static_assert", "static_cast", "struct",
+      "switch", "template", "this", "thread_local", "throw", "true", "try", "typedef", "typeid",
+      "typename", "union", "unsigned", "using", "virtual", "void", "volatile", "wchar_t",
+      "while", "xor", "xor_eq"
+    ],
+    "Go": [
+      "break", "default", "func", "interface", "select", "case", "defer", "go", "map", "struct",
+      "chan", "else", "goto", "package", "switch", "const", "fallthrough", "if", "range", "type",
+      "continue", "for", "import", "return", "var"
+    ],
+    "C#": [
+      "abstract", "as", "base", "bool", "break", "byte", "case", "catch", "char", "checked",
+      "class", "const", "continue", "decimal", "default", "delegate", "do", "double", "else",
+      "enum", "event", "explicit", "extern", "false", "finally", "fixed", "float", "for",
+      "foreach", "goto", "if", "implicit", "in", "int", "interface", "internal", "is",
+      "lock", "long", "namespace", "new", "null", "object", "operator", "out", "override",
+      "params", "private", "protected", "public", "readonly", "ref", "return", "sbyte",
+      "sealed", "short", "sizeof", "stackalloc", "static", "string", "struct", "switch",
+      "this", "throw", "true", "try", "typeof", "uint", "ulong", "unchecked", "unsafe",
+      "ushort", "using", "virtual", "void", "volatile", "while"
+    ],
+    "TypeScript": [
+      "break", "case", "catch", "class", "const", "continue", "debugger", "default", "delete",
+      "do", "else", "enum", "export", "extends", "false", "finally", "for", "function", "if",
+      "implements", "import", "in", "instanceof", "interface", "let", "new", "null", "package",
+      "private", "protected", "public", "return", "super", "switch", "this", "throw", "true",
+      "try", "typeof", "var", "void", "while", "with", "yield", "async", "await", "of"
+    ],
+    "Rust": [
+      "as", "break", "const", "continue", "crate", "dyn", "else", "enum", "extern", "false",
+      "fn", "for", "if", "impl", "in", "let", "loop", "match", "mod", "move", "mut", "pub",
+      "ref", "return", "self", "Self", "static", "struct", "super", "trait", "true", "type",
+      "unsafe", "use", "where", "while", "async", "await", "try"
+    ]
+  }
+  
+
+
+    while True:
+        print("\nOptions:")
+        print("1. Start Typing Test")
+        print("2. Show Leaderboard")
+        print("3. Choose a Programming Language")
+        print("4. Exit")
+        choice = input("Choose an option: ")
+
+        if choice == "1":
+            category = input("Choose a category from the displayed programming languages: ")
+            if category in json_data:
+                words = load_words_from_json(category)
+                start_time = time.time()
+                typed_words = get_user_input().split()
+                end_time = time.time()
+                time_taken = end_time - start_time
+                wpm = len(typed_words) / (time_taken / 60)
+                update_leaderboard(username, wpm)
+                print(f"You typed at {wpm} WPM!")
+            else:
+                print("Invalid category!")
+        elif choice == "2":
+            show_leaderboard()
+        elif choice == "3":
+            display_categories(json_data)
+            category_choice = input("\nChoose a category (by number): ")
+            selected_language, keywords = get_selected_category_option(json_data, category_choice)
+            if selected_language:
+                print(f"\nSelected Language: {selected_language}")
+                print("Keywords:", ', '.join(keywords))
+            else:
+                print("Invalid choice!")
+        elif choice == "4":
+            print("Thank you for playing!")
+            break
+        else:
+            print("Invalid choice. Try again.")
+
+if _name_ == "_main_":
+    main()
